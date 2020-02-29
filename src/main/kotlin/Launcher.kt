@@ -9,6 +9,6 @@ fun main() {
         str += "."
     }
 
-    CanvasDrawer().drawStuff()
+    CanvasDrawer().drawLoop()
 }
 

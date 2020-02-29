@@ -1,3 +1,5 @@
+
+import core.Game
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.browser.document
@@ -5,26 +7,26 @@ import kotlin.browser.window
 import kotlin.js.Date
 
 class CanvasDrawer {
+    private var lastTickTs: Double
+    private var game: Game
     var canvas = document.getElementById("myCanvas") as HTMLCanvasElement;
     var ctx = canvas.getContext("2d") as CanvasRenderingContext2D
 
     init {
+        game = Game()
 
+        lastTickTs = Date().getTime()
     }
 
-    fun drawStuff() {
-        draw()
+    fun drawLoop() {
+        val currentTs = Date().getTime()
+        val delta = currentTs - lastTickTs
+        game.onTick(delta)
+        draw(delta)
+        window.setTimeout({ drawLoop() }, 64)
     }
 
-    fun draw() {
-        val d = Date();
-        val n = d.getTime()
-        val ratio = (n % 1000) / 1000.0
-        ctx.fillStyle = "#FFFF00";
-        ctx.fillRect(0.0, 0.0, 150.0, 75.0);
-        ctx.fillStyle = "#FFF0FF";
-        ctx.fillRect(0.0, 0.0, 130 * ratio, 55.0);
-
-        window.setTimeout({ draw() }, 64)
+    fun draw(delta: Double) {
+        game.drawGame(ctx)
     }
 }
