@@ -100,8 +100,8 @@ class GameDrawer(val game: Game) {
         return Color.toStr(
             heightScale.toFloat(),
             1f,
-            sin(offset * PI).toFloat() / (1 + 10 * heightScale.toFloat()),
-            cos(offset * PI).toFloat() / (1 + 10 * heightScale.toFloat())
+            sin(offset * PI).toFloat() / (3 + 10 * heightScale.toFloat()),
+            cos(offset * PI).toFloat() / (3 + 10 * heightScale.toFloat())
         )
     }
 
