@@ -3,7 +3,7 @@ package core
 import org.w3c.dom.CanvasRenderingContext2D
 import utils.Point2D
 
-private const val MINI_MAP_TILE_SIZE = 16
+private const val MINI_MAP_TILE_SIZE = 4
 val PLAYER_SIZE = MINI_MAP_TILE_SIZE / 2
 
 class GameDrawer(val game: Game) {
@@ -20,6 +20,14 @@ class GameDrawer(val game: Game) {
     }
 
     private fun drawMiniMap() {
+
+        drawRayCast(game.player)
+
+        drawPlayer(game.player)
+
+        ctx.fillStyle = "#55ff1011";
+        ctx.fillRect(0.0, .0, MINI_MAP_TILE_SIZE * MAP_SIZE.toDouble(), MINI_MAP_TILE_SIZE * MAP_SIZE.toDouble())
+
         game.level.map.fori { x, y, v ->
             when (v) {
                 Tile.WALL -> {
@@ -29,40 +37,46 @@ class GameDrawer(val game: Game) {
                 }
             }
         }
-
-
-        drawPlayer(game.player)
-        drawRayCast(game.player)
-
-
-        ctx.fillStyle = "#55ff1011";
-        ctx.fillRect(0.0, .0, MINI_MAP_TILE_SIZE * MAP_SIZE.toDouble(), MINI_MAP_TILE_SIZE * MAP_SIZE.toDouble())
     }
 
     private fun drawRayCast(player: Player) {
         val (x, y) = player.pos
         val angle = player.angle
 
-        val rayCountOneSide = 5
+        val rayCountOneSide = 64
         val fov = 1.0
         val stepAngle = fov / rayCountOneSide
 
         val totalRaysCount = rayCountOneSide * 2 + 1
 
+
+        val canvasWidth = ctx.canvas.width
+        val canvasHeight = ctx.canvas.height
+        val oneColWidth = canvasWidth / totalRaysCount.toDouble()
+
         ctx.strokeStyle = "#00ff00";
         ctx.beginPath();       // Start a new path
+
         repeat(totalRaysCount) { i ->
             val rayIndex = i - rayCountOneSide
             val ray = Point2D(angle + rayIndex * stepAngle).length(MAP_SIZE * ctx.canvas.width * 1.5)
 
             val rayStart = player.pos.copy()
 
-            val result = doDrawRayCast(rayStart, ray.copy().length(0.01), ray.length())
+            val result = doDrawRayCast(rayStart, ray.copy().length(0.1), ray.length())
 
             val rayEnd = result.endPos
-            
+
             ctx.moveTo(rayStart.x * MINI_MAP_TILE_SIZE, rayStart.y * MINI_MAP_TILE_SIZE);
             ctx.lineTo(rayEnd.x * MINI_MAP_TILE_SIZE, rayEnd.y * MINI_MAP_TILE_SIZE)
+
+
+            val heightScale = 1 / (result.dist + 1)
+            val finalHeight = canvasHeight * heightScale
+            val y0 = (canvasHeight - finalHeight) / 2
+            val y1 = y0 + finalHeight
+            ctx.fillStyle = "#00ddaa"
+            ctx.fillRect(i * oneColWidth, y0, oneColWidth, finalHeight)
         }
 
         ctx.stroke();
@@ -110,7 +124,7 @@ class GameDrawer(val game: Game) {
     }
 
     private fun drawTileWall(x: Int, y: Int) {
-        ctx.fillStyle = "#000";
+        ctx.fillStyle = "#ddd";
         ctx.fillRect(x * MINI_MAP_TILE_SIZE, y * MINI_MAP_TILE_SIZE, MINI_MAP_TILE_SIZE, MINI_MAP_TILE_SIZE);
     }
 }
