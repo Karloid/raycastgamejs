@@ -33,7 +33,7 @@ task assembleWeb(type: Sync) {
         })
     }
     from compileKotlin2Js.destinationDir
-    into "${projectDir}/web"
+    into "${projectDir}/webout/res"
 
     dependsOn classes
 }
