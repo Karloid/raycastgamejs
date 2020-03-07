@@ -1,19 +1,20 @@
 package core
 
-import utils.Log
+import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.document
 
 class InputController {
 
+    private var isShiftPressed: Boolean = false
     val pressedKeys = mutableSetOf<Char>()
 
     init {
         document.onkeydown = { e ->
-            onKeyDown(e.which)
+            onKeyEvent(e, true)
         }
 
         document.onkeyup = { e ->
-            onKeyUp(e.which)
+            onKeyEvent(e, false)
         }
     }
 
@@ -22,9 +23,14 @@ class InputController {
         pressedKeys.remove(finalValue)
     }
 
-    private fun onKeyDown(charCode: Int) {
-        val finalValue = charCode.toChar().toLowerCase()
-        pressedKeys.add(finalValue)
+    private fun onKeyEvent(event: KeyboardEvent, isDown: Boolean) {
+        val finalValue = event.which.toChar().toLowerCase()
+        if (isDown) {
+            isShiftPressed = event.shiftKey
+            pressedKeys.add(finalValue)
+        } else {
+            pressedKeys.remove(finalValue)
+        }
     }
 
     fun isLeftTurn(): Boolean {
@@ -41,6 +47,10 @@ class InputController {
 
     fun isBackward(): Boolean {
         return pressedKeys.contains('s')
+    }
+
+    fun isSprint(): Boolean {
+        return isShiftPressed
     }
 
 }

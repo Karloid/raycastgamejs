@@ -20,17 +20,26 @@ class Game {
 
     fun onTick(delta: Double) {
         tick++
-        val rotateAngle = 0.03
-        if (input.isLeftTurn()) {
-            player.angle -= rotateAngle
-        }
 
-        if (input.isRightTurn()) {
-            player.angle += rotateAngle
+        if (input.isLeftTurn() xor input.isRightTurn()) {
+            var rotateAngle = 0.03
+            if (input.isSprint()) {
+                rotateAngle *= 2
+            }
+
+            if (input.isLeftTurn()) {
+                player.angle -= rotateAngle
+            } else {
+                player.angle += rotateAngle
+            }
         }
 
         if (input.isForward() xor input.isBackward()) {
-            val deltaMovement = Point2D(angle = player.angle).length(0.04)
+            var dist = 0.04
+            if (input.isSprint()) {
+                dist *= 2
+            }
+            val deltaMovement = Point2D(angle = player.angle).length(dist)
             if (input.isBackward()) {
                 Log.myLog("backwards before = deltaMovement=$deltaMovement")
                 deltaMovement.mul(-1.0)
