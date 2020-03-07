@@ -46,7 +46,7 @@ class GameDrawer(val game: Game) {
         val angle = player.angle
 
         val rayCountOneSide = 128
-        val fov = 1.0
+        val fov = 0.8
         val stepAngle = fov / rayCountOneSide
 
         val totalRaysCount = rayCountOneSide * 2 + 1

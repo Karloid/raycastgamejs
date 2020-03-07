@@ -1,4 +1,3 @@
-
 import core.Game
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
@@ -6,7 +5,7 @@ import kotlin.browser.document
 import kotlin.browser.window
 import kotlin.js.Date
 
-class CanvasDrawer {
+class MainManager {
     private var lastTickTs: Double
     private var game: Game
     var canvas = document.getElementById("myCanvas") as HTMLCanvasElement;

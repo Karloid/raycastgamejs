@@ -102,7 +102,9 @@ class Point2D {
     }
 
     inline fun mul(f: Double): Point2D {
-        return Point2D(x * f, y * f)
+        x *= f
+        y *= f
+        return this
     }
 
     inline fun length(): Double {
@@ -249,6 +251,7 @@ class Point2D {
     operator fun component2(): Double {
         return y
     }
+
     companion object {
         inline fun getPointByDir(direction: Direction): Point2D {
             return when (direction) {
