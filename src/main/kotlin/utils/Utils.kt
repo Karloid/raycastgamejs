@@ -2,6 +2,7 @@ package utils
 
 import kotlin.js.Math
 import kotlin.math.PI
+import kotlin.random.Random
 
 val TWO_PI: Float = (PI * 2f).toFloat()
 val HALF_PI: Float = (PI / 2f).toFloat()
@@ -105,8 +106,14 @@ inline fun ignoreTryCatch(function: () -> Unit) {
     }
 }
 
-fun <E> List<E>.random(): E {
-    return get((this.size * Math.random()).toInt())
+fun <E> List<E>.myRandom(): E {
+    return get((this.size * Random.nextDouble()).toInt())
+}
+
+fun <E> List<E>.myRandomOrNull(): E? {
+    if (isEmpty()) return null
+    
+    return myRandom()
 }
 
 

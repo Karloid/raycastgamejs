@@ -44,7 +44,7 @@ class PlainArray<T> internal constructor(val cellsWidth: Int, val cellsHeight: I
         return !(x < 0 || x >= cellsWidth || y < 0 || y >= cellsHeight)
     }
 
-    fun fori(block: (x: Int, y: Int, v: T) -> Unit) {
+    inline fun fori(block: (x: Int, y: Int, v: T) -> Unit) {
         for (y in 0 until cellsHeight) {
             for (x in 0 until cellsWidth) {
                 block(x, y, getFast(x, y))
