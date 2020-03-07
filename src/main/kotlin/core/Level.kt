@@ -1,9 +1,6 @@
 package core
 
-import utils.Log
-import utils.PlainArray
-import utils.Point2D
-import utils.myRandomOrNull
+import utils.*
 import kotlin.random.Random
 
 val MAP_SIZE = 32
@@ -15,13 +12,40 @@ class Level {
     val map = PlainArray(MAP_SIZE, MAP_SIZE) { Tile.EMPTY }
 
     fun generateMap() {
+
+        generateSimpleMaze()
+
+        //generateRandomMap()
+
+        generatePlayerSpawn()
+    }
+
+    private fun generateSimpleMaze() {
+        map.fori { x, y, v ->
+            if (Random.nextFloat() < 0.3) {
+                map[x, y] = Tile.WALL
+            }
+        }
+
+        map.fori { x, y, v ->
+            val pos = Point2D(x, y)
+            if (v == Tile.WALL &&
+                map.get(pos.copy().applyDir(Direction.UP)) == Tile.EMPTY &&
+                map.get(pos.copy().applyDir(Direction.DOWN)) == Tile.EMPTY &&
+                map.get(pos.copy().applyDir(Direction.RIGHT)) == Tile.EMPTY &&
+                map.get(pos.copy().applyDir(Direction.LEFT)) == Tile.EMPTY
+            ) {
+                map.set(pos, Tile.EMPTY)
+            }
+        }
+    }
+
+    private fun generateRandomMap() {
         map.fori { x, y, v ->
             if (Random.nextFloat() < 0.2) {
                 map[x, y] = Tile.WALL
             }
         }
-
-        generatePlayerSpawn()
     }
 
     private fun generatePlayerSpawn() {
