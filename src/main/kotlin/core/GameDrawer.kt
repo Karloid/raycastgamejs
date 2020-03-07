@@ -1,6 +1,7 @@
 package core
 
 import org.w3c.dom.CanvasRenderingContext2D
+import utils.Point2D
 
 private const val MINI_MAP_TILE_SIZE = 8
 val PLAYER_SIZE = MINI_MAP_TILE_SIZE / 2
@@ -29,11 +30,38 @@ class GameDrawer(val game: Game) {
             }
         }
 
+        doRayCast(game.player)
+
         drawPlayer(game.player)
 
 
         ctx.fillStyle = "#55ff1011";
         ctx.fillRect(0.0, .0, MINI_MAP_TILE_SIZE * MAP_SIZE.toDouble(), MINI_MAP_TILE_SIZE * MAP_SIZE.toDouble())
+    }
+
+    private fun doRayCast(player: Player) {
+        val (x, y) = player.pos
+        val angle = player.angle
+
+        val rayCountOneSide = 5
+        val fov = 1.0
+        val stepAngle = fov / rayCountOneSide
+
+        val totalRaysCount = rayCountOneSide * 2 + 1
+
+        ctx.beginPath();       // Start a new path
+        repeat(totalRaysCount) { i ->
+            val rayIndex = i - rayCountOneSide
+            val ray = Point2D(angle + rayIndex * stepAngle).length(MAP_SIZE * ctx.canvas.width * 1.5)
+
+            val rayStart = player.pos.copy()
+            val rayEnd = rayStart.copy() + ray
+
+            ctx.moveTo(rayStart.x * MINI_MAP_TILE_SIZE, rayStart.y * MINI_MAP_TILE_SIZE);
+            ctx.lineTo(rayEnd.x * MINI_MAP_TILE_SIZE, rayEnd.y * MINI_MAP_TILE_SIZE)
+        }
+
+        ctx.stroke();
     }
 
     private fun drawPlayer(player: Player) {

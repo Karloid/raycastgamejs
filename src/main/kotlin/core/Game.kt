@@ -17,7 +17,7 @@ class Game {
     }
 
     fun onTick(delta: Double) {
-
+        player.angle += 0.05
     }
 
     fun drawGame(ctx: CanvasRenderingContext2D) {

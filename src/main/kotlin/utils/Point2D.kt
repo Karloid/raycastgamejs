@@ -242,6 +242,13 @@ class Point2D {
         return Point2D(intX, intY)
     }
 
+    operator fun component1(): Double {
+        return x
+    }
+
+    operator fun component2(): Double {
+        return y
+    }
     companion object {
         inline fun getPointByDir(direction: Direction): Point2D {
             return when (direction) {
