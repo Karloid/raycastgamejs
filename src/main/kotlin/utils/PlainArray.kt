@@ -57,7 +57,7 @@ class PlainArray<T> internal constructor(val cellsWidth: Int, val cellsHeight: I
     }
 
     fun get(pos: Point2D): T? {
-        return get(pos.x.toInt(), pos.y.toInt())
+        return get(pos.x.roundToInt(), pos.y.roundToInt())
     }
 
     fun getFastNoRound(pos: Point2D): T {
