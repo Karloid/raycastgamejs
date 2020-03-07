@@ -252,6 +252,12 @@ class Point2D {
         return y
     }
 
+    fun set(point2D: Point2D): Point2D {
+        x = point2D.x
+        y = point2D.y
+        return this
+    }
+
     companion object {
         inline fun getPointByDir(direction: Direction): Point2D {
             return when (direction) {

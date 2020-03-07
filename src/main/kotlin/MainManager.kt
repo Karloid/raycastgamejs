@@ -22,7 +22,7 @@ class MainManager {
         val delta = currentTs - lastTickTs
         game.onTick(delta)
         draw(delta)
-        window.setTimeout({ drawLoop() }, 64)
+        window.setTimeout({ drawLoop() }, 16)
     }
 
     fun draw(delta: Double) {
