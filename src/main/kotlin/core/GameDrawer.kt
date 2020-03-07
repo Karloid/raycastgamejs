@@ -2,11 +2,14 @@ package core
 
 import org.w3c.dom.CanvasRenderingContext2D
 import utils.Color
-import utils.Log
 import utils.Point2D
+import kotlin.js.Date
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 private const val MINI_MAP_TILE_SIZE = 4
-val PLAYER_SIZE = MINI_MAP_TILE_SIZE / 2
+val MINI_MAP_DRAW_PLAYER_SIZE = MINI_MAP_TILE_SIZE / 2
 
 class GameDrawer(val game: Game) {
     lateinit var ctx: CanvasRenderingContext2D
@@ -61,6 +64,8 @@ class GameDrawer(val game: Game) {
 
         ctx.fillStyle = Color.toStr(1f, 1f, 0f, 0f)
 
+        val currentMs = Date().getMilliseconds().toDouble()
+
         repeat(totalRaysCount) { i ->
             val rayIndex = i - rayCountOneSide
             val ray = Point2D(angle + rayIndex * stepAngle).length(MAP_SIZE * ctx.canvas.width * 1.5)
@@ -76,7 +81,7 @@ class GameDrawer(val game: Game) {
 
 
             val heightScale = 1 / (result.dist + 1)
-            ctx.fillStyle = Color.toStr(heightScale.toFloat(), 1f, 0f, 0f)
+            ctx.fillStyle = getWallColor(heightScale, currentMs)
             val finalHeight = canvasHeight * heightScale
             val y0 = (canvasHeight - finalHeight) / 2
             val y1 = y0 + finalHeight
@@ -84,6 +89,20 @@ class GameDrawer(val game: Game) {
         }
 
         ctx.stroke();
+    }
+
+    private fun getWallColor(heightScale: Double, currentMs: Double): String {
+
+        var offset = currentMs
+        offset = (offset + (heightScale * 1000)) % 1000
+        offset /= 1000.0
+
+        return Color.toStr(
+            heightScale.toFloat(),
+            1f,
+            sin(offset * PI).toFloat() / (1 + 10 * heightScale.toFloat()),
+            cos(offset * PI).toFloat() / (1 + 10 * heightScale.toFloat())
+        )
     }
 
     private fun doDrawRayCast(rayStart: Point2D, step: Point2D, maxLength: Double): RayCastResult {
@@ -120,10 +139,10 @@ class GameDrawer(val game: Game) {
         val x = player.pos.x
         val y = player.pos.y
         ctx.fillRect(
-            x * MINI_MAP_TILE_SIZE - PLAYER_SIZE / 2,
-            y * MINI_MAP_TILE_SIZE - PLAYER_SIZE / 2,
-            PLAYER_SIZE.toDouble(),
-            PLAYER_SIZE.toDouble()
+            x * MINI_MAP_TILE_SIZE - MINI_MAP_DRAW_PLAYER_SIZE / 2,
+            y * MINI_MAP_TILE_SIZE - MINI_MAP_DRAW_PLAYER_SIZE / 2,
+            MINI_MAP_DRAW_PLAYER_SIZE.toDouble(),
+            MINI_MAP_DRAW_PLAYER_SIZE.toDouble()
         )
     }
 

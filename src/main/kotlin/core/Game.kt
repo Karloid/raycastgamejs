@@ -6,6 +6,8 @@ import utils.PlainArray
 import utils.Point2D
 import utils.then
 
+val PLAYER_GAME_SIZE = 0.1
+
 class Game {
 
     private val drawer = GameDrawer(this)
@@ -43,16 +45,23 @@ class Game {
             }
             val deltaMovement = Point2D(angle = player.angle).length(dist)
             if (input.isBackward()) {
-                Log.myLog("backwards before = deltaMovement=$deltaMovement")
                 deltaMovement.mul(-1.0)
-                Log.myLog("backwards after = deltaMovement=$deltaMovement")
             }
-            val oldPos = player.pos.copy()
-            player.pos.plus(deltaMovement)
-            if (checkCollisions(player.pos, 0.1)) {
-                player.pos.set(oldPos)
-            }
+            movePlayerAndCheckCollisions(deltaMovement)
+        }
+    }
 
+    private fun movePlayerAndCheckCollisions(deltaMovement: Point2D) {
+        var oldPos = player.pos.copy()
+
+        player.pos.plus(deltaMovement.x, 0.0)
+        if (checkCollisions(player.pos, PLAYER_GAME_SIZE)) {
+            player.pos.set(oldPos)
+        }
+        oldPos = player.pos.copy()
+        player.pos.plus(0.0, deltaMovement.y)
+        if (checkCollisions(player.pos, PLAYER_GAME_SIZE)) {
+            player.pos.set(oldPos)
         }
     }
 
@@ -74,29 +83,35 @@ class Game {
         val halfSize = size / 2
         var x = (pos.x - halfSize).toInt()
         var y = (pos.y - halfSize).toInt()
-        (tiles.getFast(x, y) === Tile.WALL).then {
+        var tile = tiles[x, y]
+        isWallOrNull(tile).then {
             return true
         }
 
         x = (pos.x - halfSize).toInt()
         y = (pos.y + halfSize).toInt()
-        (tiles.getFast(x, y) === Tile.WALL).then {
+        tile = tiles[x, y]
+        isWallOrNull(tile).then {
             return true
         }
 
         x = (pos.x + halfSize).toInt()
         y = (pos.y + halfSize).toInt()
-        (tiles.getFast(x, y) === Tile.WALL).then {
+        tile = tiles[x, y]
+        isWallOrNull(tile).then {
             return true
         }
 
         x = (pos.x + halfSize).toInt()
         y = (pos.y - halfSize).toInt()
-        (tiles.getFast(x, y) === Tile.WALL).then {
+        tile = tiles[x, y]
+        isWallOrNull(tile).then {
             return true
         }
 
         return false
     }
+
+    private fun isWallOrNull(tile: Tile?) = tile === Tile.WALL || tile === null
 
 }
