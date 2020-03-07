@@ -1,6 +1,8 @@
 package core
 
 import org.w3c.dom.CanvasRenderingContext2D
+import utils.Color
+import utils.Log
 import utils.Point2D
 
 private const val MINI_MAP_TILE_SIZE = 4
@@ -43,7 +45,7 @@ class GameDrawer(val game: Game) {
         val (x, y) = player.pos
         val angle = player.angle
 
-        val rayCountOneSide = 64
+        val rayCountOneSide = 128
         val fov = 1.0
         val stepAngle = fov / rayCountOneSide
 
@@ -57,13 +59,15 @@ class GameDrawer(val game: Game) {
         ctx.strokeStyle = "#00ff00";
         ctx.beginPath();       // Start a new path
 
+        ctx.fillStyle = Color.toStr(1f, 1f, 0f, 0f)
+
         repeat(totalRaysCount) { i ->
             val rayIndex = i - rayCountOneSide
             val ray = Point2D(angle + rayIndex * stepAngle).length(MAP_SIZE * ctx.canvas.width * 1.5)
 
             val rayStart = player.pos.copy()
 
-            val result = doDrawRayCast(rayStart, ray.copy().length(0.1), ray.length())
+            val result = doDrawRayCast(rayStart, ray.copy().length(0.001), ray.length())
 
             val rayEnd = result.endPos
 
@@ -72,11 +76,11 @@ class GameDrawer(val game: Game) {
 
 
             val heightScale = 1 / (result.dist + 1)
+            ctx.fillStyle = Color.toStr(heightScale.toFloat(), 1f, 0f, 0f)
             val finalHeight = canvasHeight * heightScale
             val y0 = (canvasHeight - finalHeight) / 2
             val y1 = y0 + finalHeight
-            ctx.fillStyle = "#00ddaa"
-            ctx.fillRect(i * oneColWidth, y0, oneColWidth, finalHeight)
+            ctx.fillRect(i * oneColWidth, y0, oneColWidth + 2, finalHeight)
         }
 
         ctx.stroke();
